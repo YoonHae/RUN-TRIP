@@ -1,0 +1,18 @@
+{
+    "aws_mysql_db": {
+        "host": "127.0.0.1",
+        "port": "3306",
+        "user": "admin",
+        "password": "1234",
+        "database": "mysql_db"
+    },
+    "facebook_app": {
+        "id": "1122334455",
+        "code": "11223344556677889900"
+    },
+    "redis_db": {
+        "primary_host": "127.0.0.1",
+        "base_host": "127.0.0.1",
+        "port":6379
+    }
+}

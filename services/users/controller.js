@@ -1,5 +1,8 @@
+const userDB = require('.');
+const query = require('./querystring');
 
 function register(req, res) {
+    
     res.json({result: 'register'});
 }
 
@@ -12,7 +15,16 @@ function logout(req, res) {
 }
 
 function auth(req, res){
-    res.json({result: 'auth'});
+    userDB.query(query.SELECT_ALL_USER, [], (error, results) => {
+        if (error)  {
+            console.error(error);
+            res.send('error');
+        } else {
+            res.send(results);
+        }
+    });        
+
+
 }
 
 

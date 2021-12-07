@@ -1,9 +1,32 @@
-const userDB = require('.');
+const { dbConnection } = require('.');
+const hashHandler = require('../../utils/hash');
 const query = require('./querystring');
 
-function register(req, res) {
-    
-    res.json({result: 'register'});
+async function register(req, res) {
+    const requireField = ['email', 'password', 'name'];
+    requireField.forEach(field => {
+        if(!req.body[field]) {
+            return res.json({success: false, message: `필수 입력값이 누락되었습니다. (${field})`,  data: field});
+        }
+    });
+    let user = {
+        email: req.body.email,
+        password: await hashHandler.generateHash(req.body.password),
+        name: req.body.name,
+        display_name: req.body.display_name || req.body.name,
+        image: req.body.image
+    }
+
+    dbConnection.query(query.INSERT_USER, user, function(err, results) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, err });
+        } else {
+            return res.status(200).json({
+                success: true
+            });
+        }
+    });
 }
 
 function login(req, res) {
@@ -15,12 +38,16 @@ function logout(req, res) {
 }
 
 function auth(req, res){
-    userDB.query(query.SELECT_ALL_USER, [], (error, results) => {
+    dbConnection.query(query.SELECT_ALL_USER, [], (error, results) => {
         if (error)  {
             console.error(error);
             res.send('error');
         } else {
-            res.send(results);
+            hashHandler.generateHash('abc').then((hash) => {
+                hashHandler.compareHash('abc', hash).then((isMatch) => {
+                    res.send(JSON.stringify(results) + " " + hash + " " + isMatch);
+                })
+            });
         }
     });        
 

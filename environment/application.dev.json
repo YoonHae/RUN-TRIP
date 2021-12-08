@@ -14,5 +14,18 @@
         "primary_host": "127.0.0.1",
         "base_host": "127.0.0.1",
         "port":6379
+    },
+    "secret_key": {
+        "jwt": "It's#Run$Time"
+    }, 
+    "aws": {
+        "region": "ap-northeast-2",
+        "s3": {
+            "image": {
+                "bucket": "my-s3-bucket",
+                "accessKeyId": "aabbccddee",
+                "secretAccessKey": "abcdefg"
+            }
+        }
     }
 }

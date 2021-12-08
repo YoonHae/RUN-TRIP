@@ -15,4 +15,5 @@ if (process.env.NODE_ENV.trim().toLowerCase() == 'production') {
 exports.DB_CONFIG = _NODE_ENV.aws_mysql_db;
 exports.FACEBOOK_APP = _NODE_ENV.facebook_app;
 exports.REDIS_CONFIG = _NODE_ENV.redis_db;
-
+exports.SECRET_KEY = _NODE_ENV.secret_key;
+exports.AWS = _NODE_ENV.aws;

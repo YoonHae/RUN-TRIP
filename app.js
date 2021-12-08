@@ -1,4 +1,4 @@
-global.custom_env = require('./settings/env.js'); 
+global.custom_env = require('./environment/env.js'); 
 global.__workdir = __dirname;
 
 const express = require('express');
@@ -20,6 +20,9 @@ app.get('/', (req, res) => {
 
 const usersRoute = require('./services/users/route')(app);
 app.use('/api/users', usersRoute);
+
+const awsRoute = require('./services/aws/route')(app);
+app.use('/api/aws/',  awsRoute)
 
 const port = 3000;
 app.listen(port, () => {

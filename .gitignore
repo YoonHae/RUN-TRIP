@@ -1,4 +1,4 @@
 node_modules
 file-express/data
-settings/application.local.json
-settings/application.prod.json
+environment/application.local.json
+environment/application.prod.json

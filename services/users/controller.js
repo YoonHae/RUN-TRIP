@@ -32,11 +32,11 @@ function auth(req, res) {
 
 async function register(req, res) {
     // 필수값 체크
-    ['email', 'password', 'name'].forEach(field => {
+    for(var field of ['email', 'password', 'name']) {
         if(!req.body[field]) {
             return res.json({success: false, code: 501, message: `필수 입력값이 누락되었습니다. (${field})`,  data: field});
         }
-    });
+    };
 
     // 이중 가입 체크로직 추가
 

@@ -19,10 +19,14 @@ app.get('/', (req, res) => {
 
 
 const usersRoute = require('./services/users/route')(app);
-app.use('/api/users', usersRoute);
-
 const awsRoute = require('./services/aws/route')(app);
-app.use('/api/aws/',  awsRoute)
+const plansRoute = require('./services/plans/route')(app);
+const historyRoute = require('./services/history/route')(app);
+
+app.use('/api/users', usersRoute);
+app.use('/api/plans', plansRoute);
+app.use('/api/aws',  awsRoute);
+app.use('/api/history', historyRoute);
 
 const port = 3000;
 app.listen(port, () => {

@@ -1,3 +1,22 @@
+// 기본 mysql 이 named placeholder 를 지원하지 않아서 추가 모듈 설치하여 사용
+const toUnnamed = require('named-placeholders')();
+const originalQuery = require('mysql/lib/Connection').prototype.query;
+
+require('mysql/lib/Connection').prototype.query = function (...args) {
+    if (Array.isArray(args[0]) || !args[1] 
+        || (args[0].toLowerCase().indexOf('insert into') >= 0 && args[0].indexOf('?')>0)) {
+        return originalQuery.apply(this, args);
+    }
+
+    ([
+        args[0],
+        args[1]
+    ] = toUnnamed(args[0], args[1]));
+
+    return originalQuery.apply(this, args);
+};
+
+
 
 // linux => export NODE_ENV=development
 // windows => set NODE_ENV=development

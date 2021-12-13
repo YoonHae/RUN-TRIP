@@ -28,7 +28,13 @@ const moment = require('moment');
 
 const jwt = require('jsonwebtoken');
 const customRedis = require('../../modules/redis-manager');
-const redisManager = new customRedis(global.custom_env.REDIS_CONFIG.primary_host, global.custom_env.REDIS_CONFIG.base_host);
+const redisManager = new customRedis(
+    global.custom_env.REDIS_CONFIG.primary_host, 
+    global.custom_env.REDIS_CONFIG.base_host, 
+    global.custom_env.REDIS_CONFIG.port, 
+    global.custom_env.REDIS_CONFIG.user, 
+    global.custom_env.REDIS_CONFIG.password
+    );
 redisManager.connect().then(()=>console.log('redis connect!!'));
 
 

@@ -1,9 +1,10 @@
 const redis = require('redis');
 
 class RedisManager {
-    constructor (primary_host, base_host=primary_host) {        
-        this.writeClient = redis.createClient(primary_host);
-        this.readClient = redis.createClient(base_host);
+    constructor (primary_host, base_host=primary_host, port=6379, user="", password="") {      
+        
+        this.writeClient = redis.createClient({url: `redis://${user}:${password}@${primary_host}:${port}`});
+        this.readClient = redis.createClient({url: `redis://${user}:${password}@${base_host}:${port}`});
         this.name = "RedisManager";
     }
 

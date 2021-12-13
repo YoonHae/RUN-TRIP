@@ -14,7 +14,9 @@
         "primary_host": "127.0.0.1",
         "base_host": "127.0.0.1",
         "port":6379,
-        "ttl": 3600
+        "ttl": 3600,
+        "user": "",
+        "password": ""
     },
     "secret_key": {
         "jwt": "It's#Run$Time"

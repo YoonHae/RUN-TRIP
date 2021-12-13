@@ -44,7 +44,7 @@ async function issueToken(userInfo) {
         role: userInfo.role
     }
        
-    await redisManager.set(token, JSON.stringify(values), 60*60);
+    await redisManager.set(token, JSON.stringify(values), global.custom_env.REDIS_CONFIG.ttl);
     const oneHour = moment().add(1, 'hour').valueOf();
 
     return {token: token, tokenExp: oneHour};
@@ -60,7 +60,7 @@ async function getTokenInfo(token) {
     if(token) {
         let userStr = null;
         try {
-            userStr = await redisManager.get(token);
+            userStr = await redisManager.get(token, global.custom_env.REDIS_CONFIG.ttl);
         }catch (error) {
             console.log(error);
         }

@@ -22,8 +22,9 @@ function register(req, res) {
             console.error(err);
             return res.status(500).json({ success: false, err });
         } else {
+            console.log(results);
             return res.status(200).json({
-                success: true
+                success: true, id: results.insertId
             });
         }
     });

@@ -1,11 +1,20 @@
-const  {s3, test, aDeleteS3Files} = require('.');
+const  {s3, aDeleteS3Files} = require('.');
 const {v4: uuidv4} = require('uuid');
 
 function issueS3SecureKey(req, res) {
-    
+    for(var field of ['name', 'size', 'type']){
+        if(!req.query[field]) {
+            return res.json({success: false, code: 501, message: `필수 입력값이 누락되었습니다. (${field})`,  data: field});
+        }
+    }
+
+    let fileInfo = {...req.query};
+    let ext = fileInfo.name.substr(fileInfo.name.lastIndexOf("."));
+
     const params = {
         Bucket: global.custom_env.AWS.s3.image.bucket,
-        Key: uuidv4()
+        Key: uuidv4() + ext,
+        Metadata: fileInfo
     };
 
     s3.getSignedUrl('putObject', params, (err, url) => {
@@ -27,8 +36,6 @@ async function deleteS3Files(req, res) {
         Bucket: global.custom_env.AWS.s3.image.bucket,
         Key: uuidv4()
     };
-
-    test('ggggggg');
 
     console.log(req.body);
     // url 로 key 추출

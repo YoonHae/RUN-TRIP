@@ -39,9 +39,6 @@ async function aDeleteS3Files(keys) {
     return false;
 }
 
-function test (eco) {
-    console.log('eco - ', eco);
-}
 
 
-module.exports = {s3, test, aDeleteS3Files}
+module.exports = {s3, aDeleteS3Files}

@@ -13,7 +13,8 @@
     "redis_db": {
         "primary_host": "127.0.0.1",
         "base_host": "127.0.0.1",
-        "port":6379
+        "port":6379,
+        "ttl": 3600
     },
     "secret_key": {
         "jwt": "It's#Run$Time"

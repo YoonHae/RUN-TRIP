@@ -15,7 +15,10 @@ class RedisManager {
         //return Promise.all([this.writeClient.connect()]);
     }
 
-    async get(key) {
+    async get(key, ttl=0) {
+        if (ttl > 0) {
+            this.writeClient.expire(key, ttl);
+        }
         let res = await this.readClient.get(key);
         //let res = await this.writeClient.get(key);
         return res;

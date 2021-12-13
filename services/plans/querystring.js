@@ -5,6 +5,12 @@ module.exports.UPDATE_PLAN = `
     where id = :id;
 `;
 
+module.exports.UPDATE_PLAN_IMAGES = `
+    update plans 
+    set images = :images
+    where id = :id;
+`;
+
 module.exports.DELETE_PLAN = "delete from plans where id = ?";
 
 module.exports.SELECT_PLAN_WHERE_ID = `
@@ -13,6 +19,15 @@ module.exports.SELECT_PLAN_WHERE_ID = `
     left join users u on p.user_id = u.id
     where p.id = ?
 `
+
+module.exports.SELECT_DETAIL_PLAN_WHERE_ID = `
+    select p.id, p.user_id, p.title, p.description, p.date, p.images, p.continent, u.display_name, h.id as history_id
+    from plans p
+    left join users u on p.user_id = u.id
+    left join history h on p.id = h.plan_id and h.user_id = :user_id
+    where p.id = :plan_id
+`
+
 
 module.exports.get_SELECT_PLAN_COUNT = (condition) =>{
     return `

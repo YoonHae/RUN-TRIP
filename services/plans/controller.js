@@ -1,5 +1,6 @@
 const { dbConnection } = require('.');
 const { aDeleteS3Files } = require('../aws');
+const { getTokenInfo } = require('../users');
 const query = require('./querystring');
 
 
@@ -26,14 +27,18 @@ function register(req, res) {
             return res.status(500).json({ success: false, err });
         } else {
             return res.status(200).json({
-                success: true
+                success: true, id: results.insertId
             });
         }
     });
 }
 
 async function getPlan(req, res) {
-    let result = await dbConnection.aQuery(query.SELECT_PLAN_WHERE_ID, [req.params.id]);
+    let userInfo = await getTokenInfo(req.cookies.w_auth);
+    let result = null;
+    if (!userInfo) userInfo = {id: null}
+    result = await dbConnection.aQuery(query.SELECT_DETAIL_PLAN_WHERE_ID, {plan_id: req.params.id, user_id: userInfo.id});
+
     if(result.length) {
         let plan = result[0];
         if (plan.images) plan.images = plan.images.split(';');
@@ -74,6 +79,24 @@ async function getPlanList(req, res) {
         success: true, 
         plans: results, 
         postSize: Math.max(0, totalCnt-queryCondition.skip-queryCondition.limit)
+    });
+}
+
+function updatePlanImages (req, res) {
+    let plan = {
+        id: req.params.id,
+        images: req.body.images? req.body.images.join(";") : null,
+    }
+
+    dbConnection.query(query.UPDATE_PLAN_IMAGES, plan, function(err, results) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, err });
+        } else {
+            return res.status(200).json({
+                success: true
+            });
+        }
     });
 }
 
@@ -129,4 +152,4 @@ async function deletePlan(req, res) {
 }
 
 
-module.exports = {register, getPlanList, getPlan, updatePlan, deletePlan};
+module.exports = {register, getPlanList, getPlan, updatePlan, deletePlan, updatePlanImages};

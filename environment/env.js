@@ -31,6 +31,8 @@ if (process.env.NODE_ENV.trim().toLowerCase() == 'production') {
     _NODE_ENV = require("./application.local.json");
 }
 
+console.log("environ : ", process.env.NODE_ENV);
+
 exports.DB_CONFIG = _NODE_ENV.aws_mysql_db;
 exports.FACEBOOK_APP = _NODE_ENV.facebook_app;
 exports.REDIS_CONFIG = _NODE_ENV.redis_db;

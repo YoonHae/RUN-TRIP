@@ -1,4 +1,5 @@
 const { dbConnection } = require('.');
+const { aDeleteS3Files } = require('../aws');
 const query = require('./querystring');
 
 
@@ -77,4 +78,55 @@ async function getPlanList(req, res) {
 }
 
 
-module.exports = {register, getPlanList, getPlan};
+function updatePlan(req, res) {
+    // 필수값 체크
+    for(var field of ['title', 'description', 'date', 'continent']){
+        if(!req.body[field]) {
+            return res.json({success: false, code: 501, message: `필수 입력값이 누락되었습니다. (${field})`,  data: field});
+        }
+    }
+
+    if (!req.body.id) {
+        return res.json({success: false, code: 501, message: '해당 글의 id 정보가 없습니다.'});
+    }
+
+    let plan = {
+        id: req.params.id,
+        title: req.body.title,
+        description: req.body.description,
+        date: req.body.date,
+        images: req.body.images? req.body.images.join(";") : null,
+        continent: req.body.continent
+    }
+
+    dbConnection.query(query.UPDATE_PLAN, plan, function(err, results) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, err });
+        } else {
+            return res.status(200).json({
+                success: true
+            });
+        }
+    });
+}
+
+async function deletePlan(req, res) {
+    let result = await dbConnection.aQuery(query.SELECT_PLAN_WHERE_ID, [req.params.id]);
+    if(result.length) {
+        let plan = result[0];
+        if (plan.images) 
+        {
+            plan.images = plan.images.split(';');
+            await aDeleteS3Files(plan.images);
+
+            result = await dbConnection.aQuery(query.DELETE_PLAN, [req.params.id]);
+            res.json({success: true, result: result});
+        }
+    } else {
+        res.json({success: true, result: 'empty data'});
+    }
+}
+
+
+module.exports = {register, getPlanList, getPlan, updatePlan, deletePlan};

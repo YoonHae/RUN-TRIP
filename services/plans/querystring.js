@@ -1,4 +1,12 @@
 module.exports.INSERT_PLAN = "insert into plans set ?"
+module.exports.UPDATE_PLAN = `
+    update plans 
+    set title = :title, description = :description, date = :date, images = :images, continent = :continent
+    where id = :id;
+`;
+
+module.exports.DELETE_PLAN = "delete from plans where id = ?";
+
 module.exports.SELECT_PLAN_WHERE_ID = `
     select p.id, p.user_id, p.title, p.description, p.date, p.images, p.continent, u.display_name
     from plans p

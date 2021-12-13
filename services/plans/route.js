@@ -6,6 +6,8 @@ module.exports = app => {
     router.get('/:id', plans.getPlan);
     router.get('/', plans.getPlanList);
     router.post('/', users._auth, plans.register);
+    router.put('/:id', users._auth, plans.updatePlan);
+    router.delete('/:id', users._auth, plans.deletePlan);
     
 
     return router;

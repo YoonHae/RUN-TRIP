@@ -38,3 +38,4 @@ exports.FACEBOOK_APP = _NODE_ENV.facebook_app;
 exports.REDIS_CONFIG = _NODE_ENV.redis_db;
 exports.SECRET_KEY = _NODE_ENV.secret_key;
 exports.AWS = _NODE_ENV.aws;
+exports.API_SERVER = _NODE_ENV.api_server;

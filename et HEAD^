@@ -1,0 +1,65 @@
+[33mcommit 175f1577f6c823b6fc7b4abc9693a56341d7eb72[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Wed Dec 15 15:54:23 2021 +0900
+
+    add cors
+
+[33mcommit f1668b82a755e067ba0fbb29181d50f9c7256117[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Wed Dec 15 14:18:45 2021 +0900
+
+    cookie -> authorization header
+
+[33mcommit 01e0d58c0591238b24eb1ff0f38e8811dfffd45c[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Mon Dec 13 23:45:42 2021 +0900
+
+    redis connection error debug
+
+[33mcommit ac1a28a83f3e817215e63bdebdaa57b4ed1e10ab[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Mon Dec 13 21:11:44 2021 +0900
+
+    environ
+
+[33mcommit a8186cc340cef3d97cce10f02521881be59bb31c[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Mon Dec 13 20:58:20 2021 +0900
+
+    detail
+
+[33mcommit d3586ed1f58caab518e19b4bc1f232e942e5657a[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Mon Dec 13 10:16:22 2021 +0900
+
+    plans CRUD and s3 delete
+
+[33mcommit 0aa1383fd921d7eb4dc7b0c854c3fcfcd38832bb[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Thu Dec 9 22:53:48 2021 +0900
+
+    history 추가
+
+[33mcommit 8a3849c7f6aa907445208f923a4601632632a811[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Thu Dec 9 00:43:04 2021 +0900
+
+    token redis + s3 issue url
+
+[33mcommit a116c359fbd4da6aaa2db15f46fdd2264c374009[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Wed Dec 8 00:57:10 2021 +0900
+
+    register
+
+[33mcommit 06ec137ac5925dfdb3bc900a70f9a2368d4ce94d[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Tue Dec 7 23:55:40 2021 +0900
+
+    route users
+
+[33mcommit 376ffde4b31cfafc67bca3ec9f05d9127ad69f39[m
+Author: yoonhae <turtle0806@gmail.com>
+Date:   Tue Dec 7 23:32:05 2021 +0900
+
+    route users

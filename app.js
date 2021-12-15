@@ -4,6 +4,21 @@ global.__workdir = __dirname;
 const express = require('express');
 const app = express();
 const path= require('path');
+const cors = require("cors");
+
+const whitelist = global.custom_env.API_SERVER.cors_whitelist;
+const corsOptions = {
+    origin: function (origin, callback) {
+
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not Allowed Origin!"));
+      }
+    },
+  };
+  
+  app.use(cors(corsOptions)); // 옵션을 추가한 CORS 미들웨어 추가
 
 const bodyParser = require('body-parser');
 const cookieParser = require("cookie-parser");   // token handling

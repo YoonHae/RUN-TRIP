@@ -30,5 +30,8 @@
                 "secretAccessKey": "abcdefg"
             }
         }
+    },
+    "api_server": {
+        "cors_whitelist": ["http://localhost:3000", "http://localhost:3001"]
     }
 }

@@ -3,7 +3,9 @@ const hashHandler = require('../../modules/hash');
 const query = require('./querystring');
 
 async function _auth(req, res, next) {
-    const token = req.cookies.w_auth;
+    //const token = req.cookies.w_auth;
+    let token = req.headers['authorization'];
+    if (token) token = token.split(" ")[1];
     const userInfo = await getTokenInfo(token);
     if(!userInfo) {
         return res.json({
@@ -76,11 +78,11 @@ async function login(req, res) {
             const isMatch = await hashHandler.compareHash(req.body.password, user.password);
             if (isMatch) {
                 const tokens = await issueToken(user);
-                res.cookie("w_authExp", tokens.tokenExp);
-                res.cookie("w_auth", tokens.token)
-                    .status(200)
+                // res.cookie("w_authExp", tokens.tokenExp);
+                // res.cookie("w_auth", tokens.token)
+                    res.status(200)
                     .json({
-                        loginSuccess: true, userId: user.id
+                        loginSuccess: true, userId: user.id, token: tokens.token
                     });
             } else {
                 res.json({loginSuccess: false, code: 503, message: '비밀번호가 맞지 않습니다.'});

@@ -29,6 +29,16 @@ module.exports.SELECT_DETAIL_PLAN_WHERE_ID = `
 `
 
 
+module.exports.get_UPDATE_PLAN_BY_COLUMN_LIST = (updateColList) => {
+    const setSentence = updateColList.map(value => `${value} = :${value}`).join(", ");
+    return `
+        update plans 
+        set ${setSentence}
+        where id = :id;
+    `;
+}
+
+
 module.exports.get_SELECT_PLAN_COUNT = (condition) =>{
     return `
         select count(1) as total_cnt

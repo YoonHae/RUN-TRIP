@@ -82,47 +82,27 @@ async function getPlanList(req, res) {
     });
 }
 
-function updatePlanImages (req, res) {
-    let plan = {
-        id: req.params.id,
-        images: req.body.images? req.body.images.join(";") : null,
-    }
-
-    dbConnection.query(query.UPDATE_PLAN_IMAGES, plan, function(err, results) {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ success: false, err });
-        } else {
-            return res.status(200).json({
-                success: true
-            });
-        }
-    });
-}
-
-
 function updatePlan(req, res) {
-    // 필수값 체크
-    for(var field of ['title', 'description', 'date', 'continent']){
-        if(!req.body[field]) {
-            return res.json({success: false, code: 501, message: `필수 입력값이 누락되었습니다. (${field})`,  data: field});
+    let plan = {}
+    // UPDATE 컬럼 체크
+    for(var field of ['title', 'description', 'date', 'continent', 'images']){
+        if(req.body[field]) {
+            plan[field] = req.body[field];
         }
     }
 
-    if (!req.body.id) {
-        return res.json({success: false, code: 501, message: '해당 글의 id 정보가 없습니다.'});
+    let keys = Object.keys(plan);
+    if (keys.length == 0) {
+        return res.json({success: false, code: 501, message: `upload 할 항목이 없습니다.`,  data: req.body});
     }
 
-    let plan = {
-        id: req.params.id,
-        title: req.body.title,
-        description: req.body.description,
-        date: req.body.date,
-        images: req.body.images? req.body.images.join(";") : null,
-        continent: req.body.continent
+    plan.id = req.params.id;
+    if (plan.images) {
+        plan.images = plan.images.join(";");
     }
 
-    dbConnection.query(query.UPDATE_PLAN, plan, function(err, results) {
+    const sql = query.get_UPDATE_PLAN_BY_COLUMN_LIST(Object.keys(plan));
+    dbConnection.query(sql, plan, function(err, results) {
         if (err) {
             console.error(err);
             return res.status(500).json({ success: false, err });
@@ -152,4 +132,4 @@ async function deletePlan(req, res) {
 }
 
 
-module.exports = {register, getPlanList, getPlan, updatePlan, deletePlan, updatePlanImages};
+module.exports = {register, getPlanList, getPlan, updatePlan, deletePlan};

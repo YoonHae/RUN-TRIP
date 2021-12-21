@@ -32,6 +32,8 @@
         }
     },
     "api_server": {
-        "cors_whitelist": ["http://localhost:3000", "http://localhost:3001"]
+        "cors_whitelist": ["http://localhost:3000", "http://localhost:3001"],
+        "cache_server_url": "https://cache",
+        "cache_db_url": "mongodb+srv://id:pw@database.mongodb.net"
     }
 }

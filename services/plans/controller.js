@@ -2,6 +2,9 @@ const { dbConnection } = require('.');
 const { aDeleteS3Files } = require('../aws');
 const { getTokenInfo } = require('../users');
 const query = require('./querystring');
+const axios = require('axios');
+
+const {getCachedPlanList, putCachedPlanList, deleteCachedPlanList} = require('./cache');
 
 
 function register(req, res) {
@@ -33,35 +36,61 @@ function register(req, res) {
     });
 }
 
-async function getPlan(req, res) {
-    let userInfo = await getTokenInfo(req.cookies.w_auth);
+
+async function getPlanById(id, token) {
+    let userInfo = await getTokenInfo(token);
     let result = null;
     if (!userInfo) userInfo = {id: null}
-    result = await dbConnection.aQuery(query.SELECT_DETAIL_PLAN_WHERE_ID, {plan_id: req.params.id, user_id: userInfo.id});
+    result = await dbConnection.aQuery(query.SELECT_DETAIL_PLAN_WHERE_ID, {plan_id: id, user_id: userInfo.id});
 
-    if(result.length) {
-        let plan = result[0];
+    if(result.length) return result[0];
+    else return null;
+}
+
+
+async function getPlan(req, res) {
+    const plan = await getPlanById(req.params.id, req.cookies.w_auth);
+    if(plan) {
         if (plan.images) plan.images = plan.images.split(';');
         res.json({success: true, plan: plan})
     } else {
+        try {
+            await deleteCachedPlanList(req.params.id);
+        }catch(exception) {
+            console.error(exception);
+        }
         res.json({success: false, message: '데이터가 없습니다.'})
     }
 }
 
 async function getPlanList(req, res) {
     let queryCondition = {
-        order : req.body.order || "desc",       // sort direction
-        sortBy : req.body.sortBy || "id",       // sort
-        limit :  parseInt(req.body.limit||'20'),  // limit
-        skip : parseInt(req.body.skip||'0'),  // offset
-        where: ''
+        date1 : req.query.start_date || (new Date()).toLocaleDateString('zh-Hans-CN').replace('/', '').replace('/', ''),
+        date2 : req.query.end_date,
+        continents : JSON.parse(req.query.continents || '[]'),  // 지역정보 array
+        limit :  parseInt(req.query.limit||'20'),  // limit
+        skip : parseInt(req.query.skip||'0'),  // offset
+        useCache : req.query.cache || 't',  // 캐시 사용 여부
+        term: req.query.searchTerm  // 검색용 글자
     }
 
-    // where 조건
-    let term = req.body.searchTerm;
-    if(term)
+    if (queryCondition.useCache === 't') 
     {
-        queryCondition.where = `where title like '%${term} or description like '%${term}%'%'`
+        try {
+            // 캐시에서 데이터 조회
+            const plans = await getCachedPlanList(queryCondition);
+            res.json({ success: true, plans: plans, postSize: plans.length });
+            return;  // 정상적으로 데이터 조회하면 return 하고 오류나면 아래 db 조회로직 실행
+        } catch (exception) {
+            console.error(exception);
+        }
+    }
+    
+    // where 조건
+    
+    if(queryCondition.term)
+    {
+        queryCondition.where = `where title like '%${queryCondition.term} or description like '%${queryCondition.term}%'%'`
     }
 
     // 전체 개수
@@ -102,14 +131,30 @@ function updatePlan(req, res) {
     }
 
     const sql = query.get_UPDATE_PLAN_BY_COLUMN_LIST(Object.keys(plan));
-    dbConnection.query(sql, plan, function(err, results) {
+    dbConnection.query(sql, plan, async function(err, results) {
         if (err) {
             console.error(err);
             return res.status(500).json({ success: false, err });
         } else {
-            return res.status(200).json({
-                success: true
-            });
+
+            // caching
+            const allPlan = await getPlanById(plan.id, req.cookies.w_auth);
+            if(allPlan) {
+                allPlan.images = allPlan.images.split(';');
+                try {
+                    await putCachedPlanList(allPlan);
+                    console.log("update cache");
+                }catch (exception)
+                {
+                    console.error(exception);
+                }
+                return res.status(200).json({
+                    success: true
+                });
+            } else {
+                return res.status(500).json({ success: false, err: "empty plan" });
+            }
+                        
         }
     });
 }
@@ -120,10 +165,26 @@ async function deletePlan(req, res) {
         let plan = result[0];
         if (plan.images) 
         {
-            plan.images = plan.images.split(';');
-            await aDeleteS3Files(plan.images);
+            try {
+                // 메인 데이터 삭제 성공하면.
+                result = await dbConnection.aQuery(query.DELETE_PLAN, [req.params.id]);
+                if (result.affectedRows === 1) {
+                    try {
+                        // 캐시데이터 삭제
+                        await deleteCachedPlanList(req.params.id);
+                        console.log("delete cache");
+                    } catch(innerException ){
+                        console.error("delete cache fail -", innerException);
+                    }
 
-            result = await dbConnection.aQuery(query.DELETE_PLAN, [req.params.id]);
+                    // s3이미지 데이터 삭제
+                    plan.images = plan.images.split(';');
+                    await aDeleteS3Files(plan.images);
+                }
+            }catch(exception) {
+                console.error(exception);
+            }
+
             res.json({success: true, result: result});
         }
     } else {

@@ -25,4 +25,9 @@ dbConnection.aQuery = (query, params={}) => {
     })
 }
 
+const mongoose = require("mongoose");
+mongoose.connect(global.custom_env.API_SERVER.cache_db_url, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then (() => console.log('[mongo] cache db connected!!'))
+    .catch((err) => console.error('[mongo] cache db not connected', err));
+
 module.exports = { dbConnection };

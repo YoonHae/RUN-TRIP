@@ -3,3 +3,4 @@ file-express/data
 environment/application.local.json
 environment/application.prod.json
 .vscode
+cache

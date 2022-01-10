@@ -65,7 +65,7 @@ async function getPlan(req, res) {
 
 async function getPlanList(req, res) {
     let queryCondition = {
-        date1 : req.query.start_date || (new Date()).toLocaleDateString('zh-Hans-CN').replace('/', '').replace('/', ''),
+        date1 : req.query.start_date || (new Date()).toISOString().replace('-', '').replace('-', '').substring(0, 8),
         date2 : req.query.end_date,
         continents : JSON.parse(req.query.continents || '[]'),  // 지역정보 array
         limit :  parseInt(req.query.limit||'20'),  // limit
